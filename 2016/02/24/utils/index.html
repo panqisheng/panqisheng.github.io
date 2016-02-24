@@ -6,16 +6,37 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <title>utils | YL Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Android,node.js,hexo">
+  <meta name="description" content="###LogLog最佳实践
+
+消灭TAG
+
+
+我们用TAG就是做定位，同时方便过滤无意义的log。那么索性把当前类名作为这样一个TAG的标识。于是，在我们自定义的log类中就用如下代码设置tag：
+
+1234567891011/**     * @return 当前的类名(simpleName)     */    private static String getClassName() &amp;#12">
 <meta property="og:type" content="article">
 <meta property="og:title" content="utils">
 <meta property="og:url" content="https://github.com/panqisheng/2016/02/24/utils/index.html">
 <meta property="og:site_name" content="YL Blog">
-<meta property="og:description" content="Android,node.js,hexo">
-<meta property="og:updated_time" content="2016-02-24T08:21:21.834Z">
+<meta property="og:description" content="###LogLog最佳实践
+
+消灭TAG
+
+
+我们用TAG就是做定位，同时方便过滤无意义的log。那么索性把当前类名作为这样一个TAG的标识。于是，在我们自定义的log类中就用如下代码设置tag：
+
+1234567891011/**     * @return 当前的类名(simpleName)     */    private static String getClassName() &amp;#12">
+<meta property="og:updated_time" content="2016-02-24T09:55:29.092Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="utils">
-<meta name="twitter:description" content="Android,node.js,hexo">
+<meta name="twitter:description" content="###LogLog最佳实践
+
+消灭TAG
+
+
+我们用TAG就是做定位，同时方便过滤无意义的log。那么索性把当前类名作为这样一个TAG的标识。于是，在我们自定义的log类中就用如下代码设置tag：
+
+1234567891011/**     * @return 当前的类名(simpleName)     */    private static String getClassName() &amp;#12">
   
     <link rel="alternative" href="/atom.xml" title="YL Blog" type="application/atom+xml">
   
@@ -121,7 +142,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						
+						<a href="/tags/技术/" style="font-size: 10px;">技术</a>
 					</div>
 				</section>
 				
@@ -234,6 +255,10 @@
       
       <div class="article-info article-info-post">
         
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术/">技术</a></li></ul>
+	</div>
+
         
 
         <div class="clearfix"></div>
@@ -242,7 +267,32 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>###Log<br>Log最佳实践</p>
+<ol>
+<li>消灭TAG</li>
+</ol>
+<blockquote>
+<p>我们用TAG就是做定位，同时方便过滤无意义的log。那么索性把当前类名作为这样一个TAG的标识。于是，在我们自定义的log类中就用如下代码设置tag：</p>
+</blockquote>
+<figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * @<span class="keyword">return</span> 当前的类名(simpleName)</span><br><span class="line">     */</span><br><span class="line">    private <span class="keyword">static</span> <span class="type">String</span> getClassName() &#123;</span><br><span class="line">        <span class="type">String</span> <span class="literal">result</span>;</span><br><span class="line">        <span class="type">StackTraceElement</span> thisMethodStack = (new <span class="type">Exception</span>()).getStackTrace()[<span class="number">1</span>];</span><br><span class="line">        <span class="literal">result</span> = thisMethodStack.getClassName();</span><br><span class="line">        <span class="type">int</span> lastIndex = <span class="literal">result</span>.lastIndexOf(<span class="string">"."</span>);</span><br><span class="line">        <span class="literal">result</span> = <span class="literal">result</span>.substring(lastIndex + <span class="number">1</span>, <span class="literal">result</span>.length());</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">result</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>将Log简化</li>
+<li>在终端能显示当前类名并且增加超链</li>
+</ol>
+<blockquote>
+<p>这个功能其实ide是支持的，只不过我们可以通过一些神奇的方法来做到更好的效果。下面就给出两个可行的方法：</p>
+</blockquote>
+<figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">    * @<span class="keyword">return</span> 当前的类名（全名）</span><br><span class="line">    */</span><br><span class="line">   private <span class="keyword">static</span> <span class="type">String</span> getClassName() &#123;</span><br><span class="line">       <span class="type">String</span> <span class="literal">result</span>;</span><br><span class="line">       <span class="type">StackTraceElement</span> thisMethodStack = (new <span class="type">Exception</span>()).getStackTrace()[<span class="number">1</span>];</span><br><span class="line">       <span class="literal">result</span> = thisMethodStack.getClassName();</span><br><span class="line">       <span class="keyword">return</span> <span class="literal">result</span>;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   /**</span><br><span class="line">    * log这个方法就可以显示超链</span><br><span class="line">    */</span><br><span class="line">   private <span class="keyword">static</span> <span class="type">String</span> callMethodAndLine() &#123;</span><br><span class="line">       <span class="type">String</span> <span class="literal">result</span> = <span class="string">"at "</span>;</span><br><span class="line">       <span class="type">StackTraceElement</span> thisMethodStack = (new <span class="type">Exception</span>()).getStackTrace()[<span class="number">1</span>];</span><br><span class="line">       <span class="literal">result</span> += thisMethodStack.getClassName()+ <span class="string">"."</span>;</span><br><span class="line">       <span class="literal">result</span> += thisMethodStack.getMethodName();</span><br><span class="line">       <span class="literal">result</span> += <span class="string">"("</span> + thisMethodStack.getFileName();</span><br><span class="line">       <span class="literal">result</span> += <span class="string">":"</span> + thisMethodStack.getLineNumber() + <span class="string">")  "</span>;</span><br><span class="line">       <span class="keyword">return</span> <span class="literal">result</span>;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>让log更加美观</li>
+<li>让log支持输出object、map、list、array、jsonStr等对象</li>
+<li><p>增加log自动化和强制开关</p>
+<p>####疑点</p>
+</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(<span class="keyword">new</span> Exception()).getStackTrace()[<span class="number">1</span>];</span><br><span class="line"><span class="keyword">new</span> Exception().getStackTrace()[<span class="number">1</span>];</span><br><span class="line">(<span class="keyword">new</span> Exception()).getStackTrace()[<span class="number">2</span>];</span><br></pre></td></tr></table></figure>
+<p><a href="https://github.com/tianzhijiexian/Android-Best-Practices/blob/master/2015.8/log/log.md">原文地址</a></p>
+
       
     </div>
     
