@@ -111,7 +111,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Android-Studio添加依赖库/" style="font-size: 10px;">Android Studio添加依赖库</a> <a href="/tags/EditText/" style="font-size: 10px;">EditText</a> <a href="/tags/String/" style="font-size: 10px;">String</a> <a href="/tags/TextView/" style="font-size: 10px;">TextView</a> <a href="/tags/Utils/" style="font-size: 10px;">Utils</a>
+						<a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Android-Scroll/" style="font-size: 10px;">Android Scroll</a> <a href="/tags/Android-Studio添加依赖库/" style="font-size: 10px;">Android Studio添加依赖库</a> <a href="/tags/EditText/" style="font-size: 10px;">EditText</a> <a href="/tags/File/" style="font-size: 10px;">File</a> <a href="/tags/String/" style="font-size: 10px;">String</a> <a href="/tags/TextView/" style="font-size: 10px;">TextView</a> <a href="/tags/Utils/" style="font-size: 15px;">Utils</a>
 					</div>
 				</section>
 				
@@ -536,6 +536,260 @@
       
 	<div class="article-tag tagcloud">
 		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Utils/">Utils</a></li></ul>
+	</div>
+
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-Android/Utils - 副本 (3)" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/Android/Utils - 副本 (3)/" class="article-date">
+  	<time datetime="2016-02-23T08:21:21.000Z" itemprop="datePublished">2016-02-23</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Android/Utils - 副本 (3)/">utils</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>###Log<br>Log最佳实践</p>
+<ol>
+<li>消灭TAG</li>
+</ol>
+<blockquote>
+<p>我们用TAG就是做定位，同时方便过滤无意义的log。那么索性把当前类名作为这样一个TAG的标识。于是，在我们自定义的log类中就用如下代码设置tag：</p>
+</blockquote>
+<figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * @<span class="keyword">return</span> 当前的类名(simpleName)</span><br><span class="line">     */</span><br><span class="line">    private <span class="keyword">static</span> <span class="type">String</span> getClassName() &#123;</span><br><span class="line">        <span class="type">String</span> <span class="literal">result</span>;</span><br><span class="line">        <span class="type">StackTraceElement</span> thisMethodStack = (new <span class="type">Exception</span>()).getStackTrace()[<span class="number">1</span>];</span><br><span class="line">        <span class="literal">result</span> = thisMethodStack.getClassName();</span><br><span class="line">        <span class="type">int</span> lastIndex = <span class="literal">result</span>.lastIndexOf(<span class="string">"."</span>);</span><br><span class="line">        <span class="literal">result</span> = <span class="literal">result</span>.substring(lastIndex + <span class="number">1</span>, <span class="literal">result</span>.length());</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">result</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>将Log简化</li>
+<li>在终端能显示当前类名并且增加超链</li>
+</ol>
+<blockquote>
+<p>这个功能其实ide是支持的，只不过我们可以通过一些神奇的方法来做到更好的效果。下面就给出两个可行的方法：</p>
+</blockquote>
+<figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">    * @<span class="keyword">return</span> 当前的类名（全名）</span><br><span class="line">    */</span><br><span class="line">   private <span class="keyword">static</span> <span class="type">String</span> getClassName() &#123;</span><br><span class="line">       <span class="type">String</span> <span class="literal">result</span>;</span><br><span class="line">       <span class="type">StackTraceElement</span> thisMethodStack = (new <span class="type">Exception</span>()).getStackTrace()[<span class="number">1</span>];</span><br><span class="line">       <span class="literal">result</span> = thisMethodStack.getClassName();</span><br><span class="line">       <span class="keyword">return</span> <span class="literal">result</span>;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   /**</span><br><span class="line">    * log这个方法就可以显示超链</span><br><span class="line">    */</span><br><span class="line">   private <span class="keyword">static</span> <span class="type">String</span> callMethodAndLine() &#123;</span><br><span class="line">       <span class="type">String</span> <span class="literal">result</span> = <span class="string">"at "</span>;</span><br><span class="line">       <span class="type">StackTraceElement</span> thisMethodStack = (new <span class="type">Exception</span>()).getStackTrace()[<span class="number">1</span>];</span><br><span class="line">       <span class="literal">result</span> += thisMethodStack.getClassName()+ <span class="string">"."</span>;</span><br><span class="line">       <span class="literal">result</span> += thisMethodStack.getMethodName();</span><br><span class="line">       <span class="literal">result</span> += <span class="string">"("</span> + thisMethodStack.getFileName();</span><br><span class="line">       <span class="literal">result</span> += <span class="string">":"</span> + thisMethodStack.getLineNumber() + <span class="string">")  "</span>;</span><br><span class="line">       <span class="keyword">return</span> <span class="literal">result</span>;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>让log更加美观</li>
+<li>让log支持输出object、map、list、array、jsonStr等对象</li>
+<li><p>增加log自动化和强制开关</p>
+<p>####疑点</p>
+</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(<span class="keyword">new</span> Exception()).getStackTrace()[<span class="number">1</span>];</span><br><span class="line"><span class="keyword">new</span> Exception().getStackTrace()[<span class="number">1</span>];</span><br><span class="line">(<span class="keyword">new</span> Exception()).getStackTrace()[<span class="number">2</span>];</span><br></pre></td></tr></table></figure>
+<p><a href="https://github.com/tianzhijiexian/Android-Best-Practices/blob/master/2015.8/log/log.md">原文地址</a></p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Utils/">Utils</a></li></ul>
+	</div>
+
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-Android/AndroidScroll" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/Android/AndroidScroll/" class="article-date">
+  	<time datetime="2016-01-12T07:31:21.000Z" itemprop="datePublished">2016-01-12</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Android/AndroidScroll/">Android Scroll</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>###Android坐标系<br><img src="http://img.blog.csdn.net/20160112145734932" alt="这里写图片描述"></p>
+<blockquote>
+<p>在Android中，将屏幕最左上角的顶点作为Android的坐标系远点，往右和往下为正。</p>
+</blockquote>
+<p>###Android视图坐标系<br><img src="http://img.blog.csdn.net/20160112145747626" alt="这里写图片描述"></p>
+<blockquote>
+<p>视图坐标系，原点不在是Android坐标系中的屏幕最左上角，而是以父视图左上角为坐标原点。</p>
+<p>###触控事件——MotionEvent<br>触控事件MotionEvent中封装了一些常用的事件常量，它定义了触控事件的不同类型。</p>
+</blockquote>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//单点触摸按下动作</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ACTION_DOWN = <span class="number">0</span>;</span><br><span class="line"><span class="comment">//单点触摸离开动作</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ACTION_UP = <span class="number">1</span>;</span><br><span class="line"><span class="comment">//触摸点移动动作</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ACTION_MOVE = <span class="number">2</span>;</span><br><span class="line"><span class="comment">//触摸动作取消</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ACTION_CANCEL = <span class="number">3</span>;</span><br><span class="line"><span class="comment">//触摸动作超出边界</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ACTION_OUTSIDE = <span class="number">4</span>;</span><br><span class="line"><span class="comment">//多点触摸按下动作</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ACTION_POINTER_DOWN = <span class="number">5</span>;</span><br><span class="line"><span class="comment">//多点触摸离开动作</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> ACTION_POINTER_UP = <span class="number">6</span>;</span><br></pre></td></tr></table></figure>
+<p>通常情况下，我们会在onTouchEvent（MotionEvent event）方法中通过event.getAction()方法来获取触控事件的类型，并使用switch-case方法来进行筛选，这个代码的模式基本固定，如下：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">@<span class="function">Override</span><br><span class="line"><span class="keyword">public</span> boolean <span class="title">onTouchEvent</span>(<span class="params">MotionEvent <span class="keyword">event</span></span>)</span>&#123;</span><br><span class="line">	<span class="comment">//获取当前输入点的X、Y坐标（）视图坐标</span></span><br><span class="line">	<span class="keyword">int</span> x = (<span class="keyword">int</span>)<span class="keyword">event</span>.getX();</span><br><span class="line">	<span class="keyword">int</span> y = (<span class="keyword">int</span>)<span class="keyword">event</span>.getY();</span><br><span class="line">	<span class="keyword">switch</span>(<span class="keyword">event</span>.getAction)&#123;</span><br><span class="line">		<span class="keyword">case</span> MotionEvent.ACTION_DOWN:</span><br><span class="line">		<span class="comment">//处理输入的按下事件</span></span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> MotionEvent.ACTION_MOVE:</span><br><span class="line">		<span class="comment">//处理输入的移动事件</span></span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> MotionEvent.ACTION_UP:</span><br><span class="line">		<span class="comment">//处理输入的离开事件</span></span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>###获取坐标值的各种方法<br><img src="http://img.blog.csdn.net/20160112143400762" alt="这里写图片描述"></p>
+<ul>
+<li>View提供的获取坐标的方法。<ul>
+<li>getTop()：获取到的是View自身的顶边到其父布局顶边的距离。</li>
+<li>getLeft()：获取到的是View自身的左边到其父布局左边的距离。</li>
+<li>getRight()：获取到的是View自身的右边到其父布局<strong>左</strong>边的距离。</li>
+<li>getBottom()：获取到的是View自身的底边到其父布局<strong>顶</strong>边的距离。</li>
+</ul>
+</li>
+<li>MotionEvent提供的方法。<ul>
+<li>getX()：获取点击事件距离控件左边的距离，即视图坐标。</li>
+<li>getY()：获取点击事件距离控件顶边的距离，即视图坐标。</li>
+<li>getRawX()：获取点击事件距离整个屏幕左边的距离，即绝对坐标。</li>
+<li>getRawX()：获取点击事件距离整个屏幕顶边的距离，即绝对坐标。</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android-Scroll/">Android Scroll</a></li></ul>
+	</div>
+
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-Android/File操作" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/Android/File操作/" class="article-date">
+  	<time datetime="2015-12-16T07:38:21.000Z" itemprop="datePublished">2015-12-16</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/Android/File操作/">File操作</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>###获取总根</p>
+<figure class="highlight delphi"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">File</span>[] fileList=<span class="keyword">File</span>.listRoots();  </span><br><span class="line"><span class="comment">//返回fileList.length为1  </span></span><br><span class="line"><span class="comment">//fileList.getAbsolutePath()为"/"  </span></span><br><span class="line"><span class="comment">//这就是系统的总根</span></span><br></pre></td></tr></table></figure>
+<p>###打开总根目录</p>
+<figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">File</span> file=new <span class="keyword">File</span>(<span class="string">"/"</span>);  </span><br><span class="line"><span class="keyword">File</span>[] fileList=file.listFiles();  </span><br><span class="line">//获取的目录中除了<span class="string">"/sdcard"</span>和<span class="string">"/system"</span>还有<span class="string">"/data"</span>、<span class="string">"/cache"</span>、<span class="string">"/dev"</span>等</span><br><span class="line">//Android的根目录并不像Symbian系统那样分为<span class="keyword">C</span>盘、<span class="keyword">D</span>盘、<span class="keyword">E</span>盘等  </span><br><span class="line">//Android是基于Linux的，只有目录，无所谓盘符</span><br></pre></td></tr></table></figure>
+<p>###获取系统存储根目录</p>
+<figure class="highlight vhdl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">File</span> <span class="keyword">file</span>=Environment.getRootDirectory();//<span class="keyword">File</span> <span class="keyword">file</span>=<span class="keyword">new</span> <span class="keyword">File</span>(<span class="string">"/system"</span>);  </span><br><span class="line"><span class="keyword">File</span>[] fileList=<span class="keyword">file</span>.listFiles();  </span><br><span class="line">//这里说的系统仅仅指<span class="string">"/system"</span>  </span><br><span class="line">//不包括外部存储的手机存储的范围远远大于所谓的系统存储</span><br></pre></td></tr></table></figure>
+<p>###获取SD卡存储根目录</p>
+<figure class="highlight vhdl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">File</span> <span class="keyword">file</span>=Environment.getExternalStorageDirectory();//<span class="keyword">File</span> <span class="keyword">file</span>=<span class="keyword">new</span> <span class="keyword">File</span>(<span class="string">"/sdcard"</span>);  </span><br><span class="line"><span class="keyword">File</span>[] fileList=<span class="keyword">file</span>.listFiles();  </span><br><span class="line">//要获取SD卡首先要确认SD卡是否装载  </span><br><span class="line"><span class="typename">boolean</span> <span class="keyword">is</span>=Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);  </span><br><span class="line">//如果true，则已装载  </span><br><span class="line">//如果false，则未装载</span><br></pre></td></tr></table></figure>
+<p>###获取data根目录</p>
+<figure class="highlight vhdl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">File</span> <span class="keyword">file</span>=Environment.getDataDirectory();//<span class="keyword">File</span> <span class="keyword">file</span>=<span class="keyword">new</span> <span class="keyword">File</span>(<span class="string">"/data"</span>);  </span><br><span class="line"><span class="keyword">File</span>[] fileList=<span class="keyword">file</span>.listFiles();  </span><br><span class="line">//由于data文件夹是android里一个非常重要的文件夹，所以一般权限是无法获取到文件的，即fileList.length返回为<span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>###获取私有文件路径</p>
+<figure class="highlight delphi"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Context context=this;<span class="comment">//首先，在Activity里获取context  </span></span><br><span class="line"><span class="keyword">File</span> <span class="keyword">file</span>=context.getFilesDir();  </span><br><span class="line"><span class="keyword">String</span> path=<span class="keyword">file</span>.getAbsolutePath();  </span><br><span class="line"><span class="comment">//此处返回的路劲为/data/data/包/files，其中的包就是我们建立的主Activity所在的包  </span></span><br><span class="line"><span class="comment">//我们可以看到这个路径也是在data文件夹下  </span></span><br><span class="line"><span class="comment">//程序本身是可以对自己的私有文件进行操作  </span></span><br><span class="line"><span class="comment">//程序中很多私有的数据会写入到私有文件路径下，这也是android为什么对data数据做保护的原因之一</span></span><br></pre></td></tr></table></figure>
+<p>###获取文件（夹）绝对路径、相对路劲、文件（夹）名、父目录</p>
+<figure class="highlight delphi"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">File</span> <span class="keyword">file</span>=……  </span><br><span class="line"><span class="keyword">String</span> relativePath=<span class="keyword">file</span>.getPath();<span class="comment">//相对路径  </span></span><br><span class="line"><span class="keyword">String</span> absolutePath=<span class="keyword">file</span>.getAbsolutePath();<span class="comment">//绝对路径  </span></span><br><span class="line"><span class="keyword">String</span> fileName=<span class="keyword">file</span>.getName();<span class="comment">//文件（夹）名  </span></span><br><span class="line"><span class="keyword">String</span> parentPath=<span class="keyword">file</span>.getParent();<span class="comment">//父目录</span></span><br></pre></td></tr></table></figure>
+<p>###列出文件夹下的所有文件和文件夹</p>
+<figure class="highlight delphi"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">File</span> <span class="keyword">file</span>=……  </span><br><span class="line"><span class="keyword">File</span>[] fileList=<span class="keyword">file</span>.listFiles();</span><br></pre></td></tr></table></figure>
+<p>###判断是文件还是文件夹</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">File</span> <span class="keyword">file</span>=……  </span><br><span class="line"><span class="keyword">boolean</span> is=<span class="keyword">file</span>.isDirectory();<span class="comment">//true-是，false-否</span></span><br></pre></td></tr></table></figure>
+<p>###判断文件（夹）是否存在</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">File</span> <span class="keyword">file</span>=……  </span><br><span class="line"><span class="keyword">boolean</span> is=<span class="keyword">file</span>.exists();<span class="comment">//true-是，false-否</span></span><br></pre></td></tr></table></figure>
+<p>###新建文件（夹）</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">File file=……  </span><br><span class="line">oolean <span class="keyword">is</span>=file.isDirectory();<span class="comment">//判断是否为文件夹  </span></span><br><span class="line"><span class="comment">/*方法1*/</span>  </span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">is</span>)&#123;  </span><br><span class="line">    <span class="built_in">String</span> path=file.getAbsolutePath();  </span><br><span class="line">    <span class="built_in">String</span> name=<span class="string">"ABC"</span>;<span class="comment">//你要新建的文件夹名或者文件名  </span></span><br><span class="line">    <span class="built_in">String</span> pathx=path+name;  </span><br><span class="line">    File filex=<span class="keyword">new</span> File(pathx);  </span><br><span class="line">    boolean <span class="keyword">is</span>=filex.exists();<span class="comment">//判断文件（夹）是否存在  </span></span><br><span class="line">    <span class="keyword">if</span>(!<span class="keyword">is</span>)&#123;  </span><br><span class="line">        filex.mkdir();<span class="comment">//创建文件夹  </span></span><br><span class="line">        <span class="comment">//filex.createNewFile();//创建文件  </span></span><br><span class="line">    &#125;  </span><br><span class="line"><span class="comment">/*方法2*/</span>  </span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">is</span>)&#123;  </span><br><span class="line">    <span class="built_in">String</span> path=file.getAbsolutePath();  </span><br><span class="line">    <span class="built_in">String</span> name=<span class="string">"test.txt"</span>;<span class="comment">//你要新建的文件夹名或者文件名  </span></span><br><span class="line">    File filex=<span class="keyword">new</span> File(path,name);<span class="comment">//方法1和方法2的区别在于此  </span></span><br><span class="line">    boolean <span class="keyword">is</span>=filex.exists();<span class="comment">//判断文件（夹）是否存在  </span></span><br><span class="line">    <span class="keyword">if</span>(!<span class="keyword">is</span>)&#123;  </span><br><span class="line">        filex.mkdir();<span class="comment">//创建文件夹  </span></span><br><span class="line">        <span class="comment">//filex.createNewFile();//创建文件  </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>###重命名文件（夹）</p>
+<figure class="highlight vhdl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">File</span> <span class="keyword">file</span>=……  </span><br><span class="line"><span class="typename">String</span> parentPath=<span class="keyword">file</span>.getParent();  </span><br><span class="line"><span class="typename">String</span> newName=<span class="string">"name"</span>;//重命名后的文件或者文件夹名  </span><br><span class="line"><span class="keyword">File</span> filex=<span class="keyword">new</span> <span class="keyword">File</span>(parentPath,newName);//<span class="keyword">File</span> filex=<span class="keyword">new</span> <span class="keyword">File</span>(parentPaht+newName)  </span><br><span class="line"><span class="keyword">file</span>.renameTo(filex);</span><br></pre></td></tr></table></figure>
+<p>###删除文件（夹）</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">File</span> <span class="keyword">file</span>=……  </span><br><span class="line"><span class="keyword">file</span>.<span class="keyword">delete</span>();<span class="comment">//立即删除  </span></span><br><span class="line"><span class="comment">//file.deleteOnExit();//程序退出后删除，只有正常退出才会删除</span></span><br></pre></td></tr></table></figure>
+<p><strong>原地址：Android入门之文件系统操作（二）文件操作相关指令</strong></p>
+<p>###<a href="http://blog.csdn.net/brokge/article/details/8543145" target="_blank" rel="external"><strong>view plainprint?</strong></a></p>
+<ul>
+<li>Android 2.3提供一个称为严苛模式（StrictMode）的调试特性</li>
+<li>唯一一篇讲到在2.3之前要怎么处理的文章</li>
+</ul>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/File/">File</a></li></ul>
 	</div>
 
       
